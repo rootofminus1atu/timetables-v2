@@ -4,6 +4,8 @@ import { DataReturn } from '../utils'
 
 export async function loader({ params }: LoaderFunctionArgs) {
   // calling the timetable scraper lambda
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
   return params.id as string
 }
 
