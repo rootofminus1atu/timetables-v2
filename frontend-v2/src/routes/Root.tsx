@@ -24,10 +24,10 @@ const Root = () => {
   const navigation = useNavigation()
 
   return (
-    <div>
+    <div className='flex w-full'>
       <Sidebar allTimetableNames={allTimetableNames} />
-
-      <div id='timetable-island'>
+      <div className="divider divider-horizontal m-0 w-1"></div>
+      <div id='timetable-island' className='p-2'>
         {navigation.state === "loading" ? (
           <LoadingSpinner />
         ) : (
