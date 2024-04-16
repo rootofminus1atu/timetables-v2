@@ -7,7 +7,7 @@ export interface MondayToFridayTimetable {
 }
 
 // probably a pain, so we prob should not use tables
-const betterMock = {
+const alternativeMock = {
     '9:00': {
         monday: []  // arr of lessons tarting at 9:00
         // every other day

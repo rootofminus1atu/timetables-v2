@@ -1,7 +1,7 @@
 import { Outlet, useLoaderData, useNavigation } from 'react-router-dom'
-import { DataReturn } from '../utils'
-import Sidebar from '../components/Sidebar'
-import LoadingSpinner from '../components/LoadingSpinner'
+import { DataReturn } from '../../utils'
+import Sidebar from '../../components/Sidebar'
+import LoadingSpinner from '../../components/LoadingSpinner'
 
 
 export async function loader() {
@@ -27,7 +27,7 @@ const Root = () => {
     <div className='flex w-full'>
       <Sidebar allTimetableNames={allTimetableNames} />
       <div className="divider divider-horizontal m-0 w-1"></div>
-      <div id='timetable-island' className='flex-grow'>
+      <div id='timetable-island' className='p-2'>
         {navigation.state === "loading" ? (
           <LoadingSpinner />
         ) : (

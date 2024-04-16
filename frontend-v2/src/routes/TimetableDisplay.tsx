@@ -1,7 +1,12 @@
 import { LoaderFunctionArgs, useLoaderData } from 'react-router-dom'
 import { DataReturn } from '../utils'
 import { mockTimetable } from '../interfaces/lessons';
+import CreateEventWithNoOverlap from '../components/Timetable';
+import { momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import Timetable from '../components/Timetable';
 
+const mLocalizer = momentLocalizer(moment)
 
 export async function loader({ params }: LoaderFunctionArgs) {
   // calling the timetable scraper lambda
@@ -23,46 +28,9 @@ const TimetableDisplay = () => {
 
       <div id='timetable-will-be-here'></div>
 
-      <div className="overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>M</th>
-              <th>T</th>
-              <th>W</th>
-              <th>T</th>
-              <th>F</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* for each hour */}
+      <Timetable />
 
-            <tr>
-              <th className='mt-0 pt-0 align-top'>9:00</th>
-              <td rowSpan={2} className='bg-red-400 rounded-md p-0'>Cy Ganderton</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th className='mt-0 pt-0 align-top'>10:00</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th className='mt-0 pt-0 align-top'>11:00</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+
     </div>
   )
 }

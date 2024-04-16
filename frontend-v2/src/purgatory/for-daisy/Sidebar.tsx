@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom';
 
-// TODOS:
-// - custom hook for searching spinner display in progress
-// - material ui
 
 interface TimetableName {
   id: string
