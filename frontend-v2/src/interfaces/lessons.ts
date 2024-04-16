@@ -6,6 +6,20 @@ export interface MondayToFridayTimetable {
     friday: Lesson[]
 }
 
+export interface LessonsStoreTimetable {
+    lessons: Lesson[]
+}
+
+export const toLessonsStore = (timetable: MondayToFridayTimetable) => {
+    let lessons = timetable.monday
+    lessons = [...lessons, ...timetable.tuesday]
+    lessons = [...lessons, ...timetable.wednesday]
+    lessons = [...lessons, ...timetable.thursday]
+    lessons = [...lessons, ...timetable.friday]
+
+    return { lesson: lessons }
+}
+
 // probably a pain, so we prob should not use tables
 const alternativeMock = {
     '9:00': {
@@ -36,7 +50,7 @@ export interface LessonDetails {
 export const mockTimetable: MondayToFridayTimetable = {
     monday: [
         {
-            "start": "09:00:00",
+            "start": "09:00",
             "duration": 1,
             "day": 1,
             "details": {
@@ -49,7 +63,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "10:00:00",
+            "start": "10:00",
             "duration": 3,
             "day": 1,
             "details": {
@@ -62,7 +76,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "14:00:00",
+            "start": "14:00",
             "duration": 1,
             "day": 1,
             "details": {
@@ -75,7 +89,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "16:00:00",
+            "start": "16:00",
             "duration": 1,
             "day": 1,
             "details": {
@@ -88,7 +102,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "17:00:00",
+            "start": "17:00",
             "duration": 1,
             "day": 1,
             "details": {
@@ -103,7 +117,7 @@ export const mockTimetable: MondayToFridayTimetable = {
     ],
     tuesday: [
         {
-            "start": "11:00:00",
+            "start": "11:00",
             "duration": 2,
             "day": 2,
             "details": {
@@ -116,7 +130,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "13:00:00",
+            "start": "13:00",
             "duration": 1,
             "day": 2,
             "details": {
@@ -129,7 +143,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "17:00:00",
+            "start": "17:00",
             "duration": 1,
             "day": 2,
             "details": {
@@ -144,7 +158,7 @@ export const mockTimetable: MondayToFridayTimetable = {
     ],
     wednesday: [
         {
-            "start": "10:00:00",
+            "start": "10:00",
             "duration": 1,
             "day": 3,
             "details": {
@@ -157,7 +171,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "11:00:00",
+            "start": "11:00",
             "duration": 2,
             "day": 3,
             "details": {
@@ -170,7 +184,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "13:00:00",
+            "start": "13:00",
             "duration": 1,
             "day": 3,
             "details": {
@@ -183,7 +197,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "14:00:00",
+            "start": "14:00",
             "duration": 2,
             "day": 3,
             "details": {
@@ -196,7 +210,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "16:00:00",
+            "start": "16:00",
             "duration": 1,
             "day": 3,
             "details": {
@@ -211,7 +225,7 @@ export const mockTimetable: MondayToFridayTimetable = {
     ],
     thursday: [
         {
-            "start": "10:00:00",
+            "start": "10:00",
             "duration": 3,
             "day": 4,
             "details": {
@@ -224,7 +238,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "15:00:00",
+            "start": "15:00",
             "duration": 1,
             "day": 4,
             "details": {
@@ -237,7 +251,7 @@ export const mockTimetable: MondayToFridayTimetable = {
             }
         },
         {
-            "start": "16:00:00",
+            "start": "16:00",
             "duration": 1,
             "day": 4,
             "details": {

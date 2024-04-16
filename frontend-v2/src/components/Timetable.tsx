@@ -11,31 +11,54 @@ import {
   DateNavigator,
   TodayButton,
 } from '@devexpress/dx-react-scheduler-material-ui';
+import { mockTimetable, toLessonsStore } from '../interfaces/lessons';
+
+function stringToColor(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xFF;
+    color += ('00' + value.toString(16)).substr(-2);
+  }
+  return color;
+}
 
 
-const schedulerData = [
-{
-  startDate: '2021-07-07T09:45',
-  endDate: '2021-07-07T11:00',
-  title: 'Meeting',
-  room: "B1"
-},
-{
-  startDate: '2021-07-07T10:00',
-  endDate: '2021-07-07T12:00',
-  title: 'Meeting',
-  room: "B1"
-},
-{
-  startDate: '2021-07-07T11:15',
-  endDate: '2021-07-07T13:00',
-  title: 'Meeting',
-  room: "B1"
-},
-];
+const preparedData = toLessonsStore(mockTimetable)
 
 const Timetable = () => {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date('2021-07-07'))
+  const [currentDate, setCurrentDate] = useState<Date>(new Date('2024-04-15'))
+
+
+  const schedulerData = preparedData.lesson.map((lesson) => {
+
+    // this is wrong, the date has to come from outside (i think)
+    const startDate = new Date(currentDate)
+    startDate.setDate(startDate.getDate() + lesson.day - 1)
+
+    const startHour = parseInt(lesson.start.split(':')[0])
+    const startMinute = parseInt(lesson.start.split(':')[1])
+    startDate.setHours(startHour, startMinute, 0)
+
+    const endDate = new Date(startDate)
+    const endHour = startHour + lesson.duration
+    const endMinute = startMinute
+    endDate.setHours(endHour, endMinute, 0)
+
+    const color = stringToColor(lesson.details.subject)
+
+    return {
+      startDate: startDate,
+      endDate: endDate,
+      title: lesson.details.subject,
+      color: color
+    }
+  })
+
+  console.log(schedulerData, schedulerData.length)
 
   return (
     <Scheduler
@@ -60,7 +83,6 @@ const Timetable = () => {
       <TodayButton />
       <ViewSwitcher />
       <Appointments 
-      /*
         appointmentComponent={({
           children, data, style, ...restProps
         }: Appointments.AppointmentProps & {style?: React.CSSProperties;}) => (
@@ -69,15 +91,13 @@ const Timetable = () => {
             data={data}
             style={{
               ...style,
-              backgroundColor: '#FFC107',
+              backgroundColor: data.color,
               borderRadius: '8px',
             }}
           >
             {children}
-            <p>{data.room}</p>
           </Appointments.Appointment>
         )}
-        */
         /*
         appointmentContentComponent={({ children, data, ...restProps }) => (
             <Appointments.AppointmentContent {...restProps} data={data}>

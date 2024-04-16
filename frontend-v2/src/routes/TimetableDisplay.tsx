@@ -1,12 +1,14 @@
 import { LoaderFunctionArgs, useLoaderData } from 'react-router-dom'
 import { DataReturn } from '../utils'
 import { mockTimetable } from '../interfaces/lessons';
-import CreateEventWithNoOverlap from '../components/Timetable';
-import { momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
 import Timetable from '../components/Timetable';
 
-const mLocalizer = momentLocalizer(moment)
+
+// todo: 
+// - state management for the timetable data that has already been requested, either with useContext, useState, or something like zustand
+// - another path param, for the dates
+// - both of those at the same time? 
+
 
 export async function loader({ params }: LoaderFunctionArgs) {
   // calling the timetable scraper lambda
