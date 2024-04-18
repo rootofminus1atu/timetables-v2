@@ -5,6 +5,10 @@ import LoadingSpinner from '../components/LoadingSpinner'
 
 
 export async function loader() {
+
+
+  // calling your dynamo lambda function through apigw -> list of modules
+
   // initial fetch from dynamo
   const allTimetableNames = [
     {

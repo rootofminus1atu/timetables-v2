@@ -13,6 +13,10 @@ interface TimetableName {
 // could either be a lambda or local function
 const performSearch = async (timetableNames: TimetableName[], q: string) => {
   // the line below simulates a 1 sec wait time
+
+  
+
+
   await new Promise(resolve => setTimeout(resolve, 1000));
   return timetableNames.filter(t => t.id.toLowerCase().includes(q.toLowerCase()))
 }
