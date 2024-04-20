@@ -33,11 +33,13 @@ struct ResponseBody {
 async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
     let body = event.payload::<Payload>()?.ok_or("Empty body bruh")?;
 
-    
+    // DONE
     // get the correct week number from the body.date/offset (and the 1st monday info)
 
+    // DONE
     // construct the url using the body.timetable_id, week number and other static info
 
+    // DONE
     // scrape the timetable from that url's html
 
     // send it (that's what the code down below does)
