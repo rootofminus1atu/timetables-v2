@@ -4,6 +4,20 @@ use tracing_subscriber;
 use chrono::{Days, Duration, NaiveDate, NaiveDateTime, NaiveTime, TimeDelta};
 use scraper::{Element, ElementRef, Html, Selector};
 
+
+type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
+
+fn main() -> Result<(), Error> {
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        .init();
+
+    let res = get_the_thing(HTML_STRING)?;
+    info!("res: {:#?}", res);
+
+    Ok(())
+}
+
 // TODO:
 // - implement table poisoning
 // aka when a single cell/room_desc cannot be parsed, instead of returning a big error
@@ -11,7 +25,6 @@ use scraper::{Element, ElementRef, Html, Selector};
 // - divide the ParsingError into separate error kinds
 
 
-type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
 
 #[derive(thiserror::Error, Debug, Clone)]
@@ -47,18 +60,6 @@ enum ParsingError {
     InvalidDateString { got: String },
 }
 
-
-
-fn main() -> Result<(), Error> {
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::INFO)
-        .init();
-
-    let res = get_the_thing(HTML_STRING)?;
-    info!("res: {:#?}", res);
-
-    Ok(())
-}
 
 fn get_the_thing(html_str: &str) -> Result<Vec<Lesson>, ParsingError> {
     let document = Html::parse_document(html_str);

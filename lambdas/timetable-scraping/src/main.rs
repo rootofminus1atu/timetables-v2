@@ -1,49 +1,63 @@
 use lambda_http::{run, service_fn, tracing, Error, IntoResponse, Request, RequestPayloadExt, Response};
+use ::tracing::info;
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
+use url::TimetableUrl;
+use weekday::get_week_number_for_date;
+use parsing::{Lesson, get_all_lessons};
+
+mod parsing;
+mod url;
+mod weekday;
+
+// TODO: 
+// - better error handling at the function_handler level
+// - better error reporting at the scraper level, with some parsing/validation entry and some lifetime structs
+// - allow to return poisoned timetables, aka ones with mising data chunks
 
 #[derive(Debug, Deserialize)]
-struct Payload {
+struct RequestBody {
+    #[serde(rename = "timetableId")]
     timetable_id: String,
-
-    // 2nd field:
-
-    // DATE
-    // the date field could be a datetime.now() from the frontend by default
-    // here the frontend would have to do a bit more heavy lifting
-    // for the current week it'd have to calculate the current date
-    // for the next/previous week it'd have to calculate the current date + 7 days
-
-    // OR
-
-    // OFFSET
-    // the offset would by default be 0, which would indicate the current week
-    // so the frontend would just request 1 for next week, 2 for 2 weeks further, etc
-    // the drawback with this approach is that the 1st/last week would be hard to get
-
-    // I don't know which approach to use just yet, that will prob become more clear in the future
-    // and I think we only need these 2 params
+    date: NaiveDate
 }
 
 #[derive(Debug, Serialize)]
 struct ResponseBody {
-    // the lessons will be here
-    hello: String  // placeholder
+    lessons: Vec<Lesson>
 }
 
+#[tracing::instrument(err)]
 async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
-    let body = event.payload::<Payload>()?.ok_or("Empty body bruh")?;
+    info!("starting, event: {:?}", event);
 
-    // DONE
-    // get the correct week number from the body.date/offset (and the 1st monday info)
+    let body = event.payload::<RequestBody>()?.ok_or("Empty body bruh")?;
+    info!("body: {:?}", body);
+    let RequestBody { timetable_id, date } = body;
 
-    // DONE
-    // construct the url using the body.timetable_id, week number and other static info
+    // 1. get the correct week number from the body.date (and the 1st monday info)
+    // NOTE: instead of re-fetching it here every time, the date could be accessed from a store (s3 file) and be refreshed every once in a while with another lambda
+    // (approx 150 ms on average)
+    // if speed becomes an issue we should do what I wrote above
+    let week_number = get_week_number_for_date(date).await?;
 
-    // DONE
-    // scrape the timetable from that url's html
+    // 2. construct the url using the body.timetable_id, week number and other static info
+    let url = TimetableUrl::default(timetable_id.clone(), week_number).construct();
+    info!("url: {}", url);
 
-    // send it (that's what the code down below does)
-    let body = ResponseBody { hello: "hi".into() };
+    // 3. scrape the timetable from that url's html
+    // (approx 150ms on average too)
+    let html = reqwest::get(&url)
+        .await?
+        .error_for_status()?
+        .text()
+        .await?;
+
+    // (approx 40ms on average)
+    let lessons = get_all_lessons(&html)?;
+
+    // 4. send it
+    let body = ResponseBody { lessons };
     let stringified = serde_json::to_string(&body)?;
 
     let resp = Response::builder()
