@@ -5,9 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script type="module" src="script.js"></script>
+    <!-- JS library for searching -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
 </head>
 <body>
-    <h1>Hello World!</h1>
+    <h1>College Course Search</h1>
+    <!-- Search Box -->
+    <label for="searchInput">Search:</label>
+    <input type="text" id="searchInput" placeholder="Enter search term...">
+    <!-- Dropdown Box -->
+    <label for="searchCriteria">Search by:</label>
+    <select id="searchCriteria">
+        <option value="courseCode">Course Code</option>
+        <option value="longName">Long Name</option>
+    </select>
+    <!-- Output -->
+    <ul id="searchResults"></ul>
+
 </body>
 </html>
