@@ -1,6 +1,6 @@
 use std::str::FromStr;
 use serde::Serialize;
-use tracing::{self, debug, info};
+use tracing::{self, debug};
 use chrono::{Days, Duration, NaiveDate, NaiveDateTime, NaiveTime, TimeDelta};
 use scraper::{Element, ElementRef, Html, Selector};
 
