@@ -11,7 +11,6 @@ import {
   DateNavigator,
   TodayButton,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import { mockTimetable, toLessonsStore } from '../interfaces/lessons';
 
 function stringToColor(str: string) {
   let hash = 0;
@@ -26,10 +25,7 @@ function stringToColor(str: string) {
   return color;
 }
 
-
-const preparedData = toLessonsStore(mockTimetable)
-
-const Timetable = () => {
+const Timetable = ({}) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date('2024-04-15'))
 
 

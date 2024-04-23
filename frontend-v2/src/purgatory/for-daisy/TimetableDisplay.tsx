@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs, useLoaderData } from 'react-router-dom'
 import { DataReturn } from '../../utils'
-import { mockTimetable } from '../../interfaces/lessons';
+import { mockTimetable } from '../lessons';
 
 
 export async function loader({ params }: LoaderFunctionArgs) {
