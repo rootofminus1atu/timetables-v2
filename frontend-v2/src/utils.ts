@@ -1,5 +1,4 @@
 import { BaseLesson, Lesson, TimetableResponse } from "./interfaces/timetable"
-import { v4 as uuidv4 } from 'uuid';
 
 
 export type DataReturn<Func extends (...args: any) => any> = Awaited<ReturnType<Func>>
@@ -11,16 +10,22 @@ export function toFullLesson(baseLesson: BaseLesson, timetableId: string): Lesso
   const title = baseLesson.details.subject
   const color = '#87CEEB'  // in the future it will be generated based on the lesson name
 
-  const id = uuidv4()
-
   return {
     ...baseLesson,
-    uuid: id,
     timetableId,
     monday,
     title,
     color
   }
+}
+
+export function getDefaults() {
+  const rn = new Date()
+  return {
+    date: rn,
+    dateStr: rn.toISOString().split('T')[0],
+    view: 'Week'
+  };
 }
 
 export function getThisWeeksMonday(inputDate: Date) {
@@ -29,6 +34,9 @@ export function getThisWeeksMonday(inputDate: Date) {
   const diff = date.getDate() - day + (day === 0 ? -6 : 1) 
   return new Date(date.setDate(diff))
 }
+
+export const dateToString = (date: Date) => date.toISOString().split('T')[0]
+export const stringToDate = (dateStr: string) => new Date(dateStr)
 
 export async function fetchLessons(timetableId: string, date: Date) {
   console.log('starting REAL fetch')

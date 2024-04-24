@@ -7,7 +7,6 @@ export type Lesson = BaseLesson & {
     monday: Date
     color: string
     title: string
-    uuid: string
     // other possible props
 }
 

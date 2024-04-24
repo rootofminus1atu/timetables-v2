@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, useLoaderData, useNavigate, useSearchParams } from 'react-router-dom'
-import { DataReturn, dateToString, fetchLessons, fetchLessonsFake, getDefaults, getThisWeeksMonday, toFullLesson } from '../utils'
+import { LoaderFunctionArgs, useLoaderData } from 'react-router-dom'
+import { DataReturn, fetchLessons, fetchLessonsFake, getThisWeeksMonday, toFullLesson } from '../utils'
 import { TimetableResponse, Lesson } from '../interfaces/timetable';
 import { useCourseStore } from '../stores/courseStore';
 import { ViewState } from '@devexpress/dx-react-scheduler';
@@ -14,29 +14,36 @@ import {
   DateNavigator,
   TodayButton,
 } from '@devexpress/dx-react-scheduler-material-ui';
+import { useEffect, useState } from 'react';
+import { Course } from '../interfaces/course';
+import { useLessonsStore } from '../stores/lessonsStore';
 
 // todo: 
 // - state management for the timetable data that has already been requested, either with useContext, useState, or something like zustand
 // - another path param, for the dates
 // - both of those at the same time? 
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   console.log("enter loader")
-  const url = new URL(request.url)
-  const defaults = getDefaults()
-
   const timetableId = decodeURI(params.id as string)
 
-  const date = new Date(url.searchParams.get('date') || defaults.dateStr)
-
-  const baseLessons = await fetchLessonsFake(timetableId, date)
+  const today = new Date()
+  const baseLessons = await fetchLessonsFake(timetableId, today)
+  console.log("calling toFullLesson")
   const lessons = baseLessons.map(l => toFullLesson(l, timetableId))
+  
+
+  // const prepared: LessonForScheduler[] = lessons.map(lesson => ({
+  //   lesson: lesson,
+  //   startDate: lesson.startDate,
+  //   endDate: lesson.endDate,
+  //   title: lesson.details.subject
+  // }))
 
   console.log("exit loader")
-  return { 
-    lessons: lessons, 
-    timetableId
-  }
+  return { lessons: lessons, timetableId, date: new Date('2024-04-23T11:00:00') }
+
+  // const res = await fetchLesson(timetableId, new Date())
 }
 
 
@@ -59,30 +66,37 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 //     for that id have to revise react-router, something like fetcher
 //     so for now ill ignore query links
 
-// i got a tip
-// dont fetch lessons in the loader, do it in the component instead (better for zustand) (can use react-query)
-
-// nvm this approach with shouldRevalidate and useSearchParams is SO much better
-
 
 
 const TimetableDisplay = () => {
-  const { lessons, timetableId } = useLoaderData() as DataReturn<typeof loader>
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const currentView = searchParams.get('view') || getDefaults().view
-  const currentDate = new Date(searchParams.get('date') || getDefaults().dateStr);
+  let { lessons, timetableId, date } = useLoaderData() as DataReturn<typeof loader>
+  console.log('date from loader', date)
+  let [currentDate, setCurrentDate] = useState(date)
+  const { addLessons } = useLessonsStore();
 
   const handleCurrentDateChange = (newDate: Date) => {
-    navigate(`/timetable/${encodeURIComponent(timetableId)}?date=${dateToString(newDate)}&view=${currentView}`)
+    console.log('date from loader', date)
+    console.log('changing to', newDate)
+    setCurrentDate(newDate)
   }
 
-  const handleViewNameChange = (newView: string) => {
-    navigate(`/timetable/${encodeURIComponent(timetableId)}?date=${dateToString(currentDate)}&view=${newView}`)
-  }
+  // 1st time init
+  // useLessonsStore(state => state.setInitialLessons)(lessons)
+
+  // i dont think we need a 1st time init, maybe addLessons+fetchMore is sufficient
+  // and a couple filters for the timetableIds
+  useEffect(() => {
+    addLessons(lessons)
+  }, [lessons])
+
 
   // let courses = useCourseStore(state => state.courses)
   // let fullCourse = useCourseStore(state => state.getCourseById)(timetableId)
+
+  console.log('woohoo lessons:', useLessonsStore(state => state.lessons))
+  console.log('current date', currentDate);  
+
+  const lessonsForThisCourse = useLessonsStore(state => state.getLessonsForCourse)(timetableId)
 
   return (
     <div>
@@ -96,13 +110,12 @@ const TimetableDisplay = () => {
 
       {/*<Timetable /> */}
       <Scheduler
-        data={lessons}
+        data={lessonsForThisCourse}
       >
         <ViewState
           currentDate={currentDate}
           onCurrentDateChange={handleCurrentDateChange}
-          currentViewName={currentView}
-          onCurrentViewNameChange={handleViewNameChange}
+          defaultCurrentViewName="Week"
         />
         <DayView
           startDayHour={9}
@@ -153,4 +166,3 @@ const TimetableDisplay = () => {
 }
 
 export default TimetableDisplay
-

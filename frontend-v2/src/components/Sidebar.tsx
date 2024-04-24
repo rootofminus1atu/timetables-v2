@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom';
 import { Course } from '../interfaces/course';
 import { useCourseStore } from '../stores/courseStore';
+import { getDefaults } from '../utils';
 
 // TODOS:
 // - custom hook for searching spinner display in progress
@@ -11,6 +12,8 @@ import { useCourseStore } from '../stores/courseStore';
 const Sidebar = () => {
   const [query, setQuery] = useState('')
   const matchedCourses = useCourseStore(state => state.searchCourses)(query, ['longName'])
+
+  const defaults = getDefaults()
 
   const handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()
@@ -39,7 +42,7 @@ const Sidebar = () => {
           <ul className='flex flex-col'>
             {matchedCourses.map(c => (
               <NavLink 
-                to={`timetable/${encodeURIComponent(c.id)}`}
+                to={`/timetable/${encodeURIComponent(c.id)}?date=${defaults.dateStr}&view=${defaults.view}`}
                 key={c.id} 
                 className='btn btn-ghost justify-start'
               >
