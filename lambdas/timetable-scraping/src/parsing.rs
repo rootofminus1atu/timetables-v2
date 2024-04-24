@@ -163,7 +163,9 @@ impl FromStr for RoomDetails {
         let desc_and_attrs = desc_and_attrs.trim();
 
         let secondary_parts = desc_and_attrs.split('(')
-            .map(|s| s.trim().trim_end_matches(')'))
+            .flat_map(|s| s.trim().split(')').collect::<Vec<_>>())
+            .map(|s| s.trim().trim_matches('-').trim())
+            .filter(|s| !s.is_empty())
             .collect::<Vec<_>>();
 
         debug!("secondary_parts: {:?}", secondary_parts);
