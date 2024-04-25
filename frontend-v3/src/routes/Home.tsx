@@ -12,7 +12,7 @@ const Home = () => {
           </Typography>
         </Grid>
         <Grid item>
-          <Typography variant="body1" gutterBottom>
+          <Typography variant="body1" gutterBottom align="center">
             An improved version of our beloved timetables.
           </Typography>
         </Grid>

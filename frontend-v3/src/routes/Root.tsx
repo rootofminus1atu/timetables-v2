@@ -24,7 +24,7 @@ export async function loader() {
   return courses
 }
 
-const drawerWidth = 340;
+const drawerWidth = 300;
 
 export default function Root() {
   const allCourses = useLoaderData() as DataReturn<typeof loader>
