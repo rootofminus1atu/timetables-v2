@@ -61,14 +61,18 @@ async fn handler(Json(payload): Json<RequestBody>) -> Result<impl IntoResponse, 
 }
 
 
-async fn list_dist_contents() -> Result<impl IntoResponse, Error> {
-    let mut entries = tokio::fs::read_dir("dist").await?;
+async fn list_public_contents() -> Result<impl IntoResponse, Error> {
+    info!("in public contents reader");
+    let mut entries = tokio::fs::read_dir("public").await?;
+    info!("read the file it exists");
     let mut files = Vec::new();
 
     while let Some(entry) = entries.next_entry().await? {
         let file_name = entry.file_name().into_string().unwrap_or_default();
         files.push(file_name);
     }
+
+    info!("stuff: {:?}", files);
 
     Ok(Json(files))
 }
@@ -89,9 +93,9 @@ async fn main() {
             .allow_methods(Any)
             .allow_headers(Any)
         )
-        .route("/list-dist", get(list_dist_contents))
-        .nest_service("/", ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")))
-        .fallback_service(ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")));
+        .route("/list-public", get(list_public_contents))
+        .nest_service("/", ServeDir::new("public").not_found_service(ServeFile::new("public/index.html")))
+        .fallback_service(ServeDir::new("public").not_found_service(ServeFile::new("public/index.html")));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     info!("listening");

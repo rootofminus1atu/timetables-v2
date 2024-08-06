@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: '../lambdas/timetable-scraping-on-render/dist',
+    outDir: '../lambdas/timetable-scraping-on-render/public',
     emptyOutDir: true
   },
   server: {
