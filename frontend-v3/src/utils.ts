@@ -64,7 +64,7 @@ export async function fetchLessons(timetableId: string, date: Date) {
 		}
 		console.log(data)
 	
-		const res = await fetch("https://vtlxqv4eyh.execute-api.eu-west-1.amazonaws.com/GetModules/timetable", {
+		const res = await fetch("/api/lessons", {
 		  method: 'POST',
 		  headers: {
 			'Content-Type': 'application/json'
