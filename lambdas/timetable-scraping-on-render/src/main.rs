@@ -61,7 +61,17 @@ async fn handler(Json(payload): Json<RequestBody>) -> Result<impl IntoResponse, 
 }
 
 
+async fn list_dist_contents() -> Result<impl IntoResponse, Error> {
+    let mut entries = tokio::fs::read_dir("dist").await?;
+    let mut files = Vec::new();
 
+    while let Some(entry) = entries.next_entry().await? {
+        let file_name = entry.file_name().into_string().unwrap_or_default();
+        files.push(file_name);
+    }
+
+    Ok(Json(files))
+}
 
 // quick bandaids when porting this to axum:
 
@@ -79,7 +89,9 @@ async fn main() {
             .allow_methods(Any)
             .allow_headers(Any)
         )
-        .nest_service("/", ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")));
+        .route("/list-dist", get(list_dist_contents))
+        .nest_service("/", ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")))
+        .fallback_service(ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     info!("listening");
@@ -98,6 +110,8 @@ pub enum Error {
     WeekDayError(#[from] weekday::WeekDayError),
     #[error("Request error: {0}")]
     ReqwestError(#[from] reqwest::Error),
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
 }
 
 impl IntoResponse for Error {
@@ -106,6 +120,7 @@ impl IntoResponse for Error {
             Error::ParsingError(why) => (StatusCode::BAD_REQUEST, why.to_string()),
             Error::WeekDayError(why) => (StatusCode::BAD_REQUEST, why.to_string()),
             Error::ReqwestError(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Request Error".into()),
+            Error::IoError(_) => (StatusCode::INTERNAL_SERVER_ERROR, "IO Error".into()),
         };
 
         let body = Json(serde_json::json!({
