@@ -61,9 +61,21 @@ async fn handler(Json(payload): Json<RequestBody>) -> Result<impl IntoResponse, 
 }
 
 
-async fn list_public_contents() -> Result<impl IntoResponse, Error> {
-    info!("in public contents reader");
-    let mut entries = tokio::fs::read_dir("public").await?;
+async fn list_public_real_contents() -> Result<impl IntoResponse, Error> {
+    info!("in public-real contents reader");
+
+    let mut current_entries = tokio::fs::read_dir(".").await?;
+    info!("read the current directory, it exists");
+
+    let mut files = Vec::new();
+
+    while let Some(entry) = current_entries.next_entry().await? {
+        let file_name = entry.file_name().into_string().unwrap_or_default();
+        files.push(format!("./{}", file_name));
+    }
+    info!("stuff: {:?}", files);
+
+    let mut entries = tokio::fs::read_dir("public-real").await?;
     info!("read the file it exists");
     let mut files = Vec::new();
 
@@ -87,15 +99,15 @@ async fn main() {
 
     let app = Router::new()
         .route("/api/lessons", post(handler))
-        .route("/dummy", get(|| async { Html(r#"<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Document</title></head><body><h1>dummy html</h1></body></html>"#) }))
-        .layer(CorsLayer::new()
-            .allow_origin(Any)
-            .allow_methods(Any)
-            .allow_headers(Any)
-        )
-        .route("/list-public", get(list_public_contents))
-        .nest_service("/", ServeDir::new("public").not_found_service(ServeFile::new("public/index.html")))
-        .fallback_service(ServeDir::new("public").not_found_service(ServeFile::new("public/index.html")));
+        // .route("/dummy", get(|| async { Html(r#"<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Document</title></head><body><h1>dummy html</h1></body></html>"#) }))
+        // .layer(CorsLayer::new()
+        //     .allow_origin(Any)
+        //     .allow_methods(Any)
+        //     .allow_headers(Any)
+        // )
+        .route("/list-public-real", get(list_public_real_contents))
+        .nest_service("/", ServeDir::new("public-real").not_found_service(ServeFile::new("public-real/index.html")))
+        .fallback_service(ServeDir::new("public-real").not_found_service(ServeFile::new("public-real/index.html")));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     info!("listening");
