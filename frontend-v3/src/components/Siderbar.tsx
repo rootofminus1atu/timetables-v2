@@ -19,6 +19,10 @@ const Sidebar = () => {
 
   const defaults = getDefaults()
 
+  const searchParams = new URLSearchParams(location.search);
+  console.log(searchParams)
+  const currentDate = searchParams.get('date') || defaults.dateStr
+
   const handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()
     const query = event.target.value || ''
@@ -51,7 +55,7 @@ const Sidebar = () => {
           <ListItem key={course.id} disablePadding>
             <ListItemButton
               component={NavLink}
-              to={`/timetable/${encodeURIComponent(course.id)}?date=${defaults.dateStr}&view=${defaults.view}`}
+              to={`/timetable/${encodeURIComponent(course.id)}?date=${currentDate}&view=${defaults.view}`}
               sx={{
                 color: 'inherit',
                 textDecoration: 'none',
