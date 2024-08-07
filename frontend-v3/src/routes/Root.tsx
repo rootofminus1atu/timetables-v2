@@ -50,7 +50,7 @@ export async function loader() {
       "department": "Dept of Civil Eng and Construction",
       "shortName": "Civil Engineering L7 - Y3 - A",
       "longName": "B Eng in Civil Engineering L7 - Y3 - A",
-      "id": "SG_ECVIL_B07/F/Y3/1/(A) - CIV L7 Y3 A"
+      "id": "SG_ECVIL_B07/F/Y3/1/(A)"
     }
   ]
 

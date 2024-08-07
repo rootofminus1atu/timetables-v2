@@ -103,6 +103,8 @@ pub enum Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
+        tracing::error!("uh oh: {}", self);
+
         let (status, error_message) = match self {
             Error::ParsingError(why) => (StatusCode::BAD_REQUEST, why.to_string()),
             Error::WeekDayError(why) => (StatusCode::BAD_REQUEST, why.to_string()),
