@@ -64,7 +64,7 @@ export async function fetchLessons(timetableId: string, date: Date) {
 		}
 		console.log(data)
 	
-		const res = await fetch("/api/lessons", {
+		const res = await fetch("https://servicenexus.shuttleapp.rs/timetable/lessons", {
 		  method: 'POST',
 		  headers: {
 			'Content-Type': 'application/json'
