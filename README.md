@@ -1,6 +1,6 @@
 # TimetablesV2
 
-TimetablesV2 is a web application that enhances the original ATU timetables website, making it more accessible and mobile-friendly. Under the hood it is a cloud-first application hosted on AWS. Check out the [live demo](https://timetables-v2.onrender.com/timetable/SG_KSODV_H08%2FF%2FY2%2F1%2F(B)?date=2024-04-19&view=Week) (currently not hosted on AWS due to lack of resources (money)). 
+TimetablesV2 is a web application that enhances the original ATU timetables website, making it more accessible and mobile-friendly. Under the hood it is a cloud-first application hosted on AWS. Check out the [live demo](https://timetables-v2.onrender.com/timetable/SG_KSODV_H08%2FF%2FY2%2F1%2F(B)?date=2024-09-18&view=Week) (currently not hosted on AWS due to lack of resources (money)). 
  
 It is worth noting that there are periods of time with no lessons, like the summer/winter holidays, easter break, reading week, etc. so if you don't see anything there might simply be no lessons to display.
  
